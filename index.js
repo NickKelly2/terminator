@@ -3,13 +3,10 @@ const fs = require('fs');
 const request = require('request');
 
 const width = process.stdout.rows - 1;
-const height = process.stdout.columns - 1;
-
-console.log({width, height});
+const height = Math.max(process.stdout.columns - 1, 100);
 
 
-
-var options = {
+const options = {
   fit:    'box',
   width,
   height,
@@ -17,12 +14,9 @@ var options = {
 
 const URL = `https://picsum.photos/${width}/${height}`;
 
-var download = function(uri, filename) {
+const download = function(uri, filename) {
   return new Promise((resolve, reject) => {
     request.head(uri, function(err, res, body){
-      console.log('content-type:', res.headers['content-type']);
-      console.log('content-length:', res.headers['content-length']);
-
       request(uri).pipe(fs.createWriteStream(filename)).on('close', () => setTimeout(() => resolve(filename), 2500));
   });
   });
